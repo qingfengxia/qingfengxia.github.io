@@ -1,20 +1,21 @@
 <h1 id="automatic-and-intelligent-engineering-design">Automatic and Intelligent Engineering Design</h1>
-<p>This is a temporal home for the research &quot;Automatic and Intelligent Engineering Design&quot;.</p>
+<p>This is a temporal home for the research “Automatic and Intelligent Engineering Design”.</p>
 <p>by Qingfeng Xia</p>
 <p>2019</p>
 <h2 id="introduction-to-intelligent-engineering-design">1. Introduction to Intelligent engineering design</h2>
-<p>The schematic of the current time-consuming and the proposed future intelligent engineering design can be found: <a href="https://github.com/qingfengxia/CAE_pipeline" class="uri">https://github.com/qingfengxia/CAE_pipeline</a></p>
+<p><img src="https://raw.githubusercontent.com/qingfengxia/CAE_pipeline/master/images/current_CAE_process.png" alt="schematic" /> This schematic of the current time-consuming and the proposed future intelligent engineering design can be found: <a href="https://github.com/qingfengxia/CAE_pipeline" class="uri">https://github.com/qingfengxia/CAE_pipeline</a></p>
 <p>To enable intelligent engineering design, I (Qingfeng Xia) have initiated several sub-projects on github since 2016.</p>
-<h2 id="ccurrently-active-sub-projects">2. Ccurrently active sub-projects</h2>
+<h2 id="currently-active-sub-projects">2. Currently active sub-projects</h2>
 <h3 id="cad-freecad">2.1 CAD: FreeCAD</h3>
-<p>ebook: <em>Module developer's Guide to FreeCAD</em> <a href="https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide" class="uri">https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide</a></p>
-<h3 id="geometry-processing">2.2 Geometry processing</h3>
-<p>During my employment in UKAEA, I design a &quot;parallel preprocessor&quot; to pre-process large assemblies (tens of thousands parts) to enable meshing and simulation. It is designed to use both MPI and multi-threading parallelism; this software will be open source very soon. Independently, I will dive into the research problem of geometry recognition using machine learning.</p>
+<h3 id="geometry-pre-processing">Geometry pre-processing</h3>
+<p>During my employment in UKAEA, I design a “parallel preprocessor” to pre-process large assemblies (tens of thousands parts) to enable meshing and simulation. It is designed to use both MPI and multi-threading parallelism; this software will be open source very soon. Independently, I will dive into the research problem of geometry recognition using machine learning.</p>
 <h3 id="parallel-meshing">2.3 Parallel meshing</h3>
-<p>It is expected third-party meshing tools will be used, while &quot;parallel pre-processor&quot; will make a parallel meshing framework to accelerate meshing large assemblies (underway). <a href="">MOAB</a> is a library to import mesh from various meshing tools and export meshing for different solvers.</p>
+<p>It is expected third-party meshing tools will be used, while “parallel pre-processor” will make a parallel meshing framework to accelerate meshing large assemblies (underway). <a href="">MOAB</a> is a library to import mesh from various meshing tools and export meshing for different solvers.</p>
 <h3 id="solver-input-openfoam">2.4. Solver input: OpenFOAM</h3>
 <p>I developed a <a href="https://github.com/qingfengxia/Cfd">CFD module (using OpenFOAM solver) for FreeCAD</a>, to enable one-stop design and simulation, with the topology optimization capacity. There is a independent module inside this CFD module, <a href=""><em>FoamCaseBuilder</em></a>, aiming at simulation automation.</p>
-<p><img src="https://github.com/qingfengxia/qingfengxia.github.io/blob/master/images/FreeCAD_CFDworkbench_screenshot.png" alt="OpenFOAM as a CFD solver in CfdWorkbench of FreeCAD" /> <img src="http://www.iesensor.com/blog/wp-content/uploads/2018/05/FreeCAD_CFD_module_openfoam_now_working_with_WSL.png" alt="OpenFOAM as a CFD solver in CfdWorkbench of FreeCAD" /></p>
+<figure>
+<img src="https://github.com/qingfengxia/qingfengxia.github.io/blob/master/images/FreeCAD_CFDworkbench_screenshot.png" alt="OpenFOAM as a CFD solver in CfdWorkbench of FreeCAD" /><figcaption>OpenFOAM as a CFD solver in CfdWorkbench of FreeCAD</figcaption>
+</figure>
 <p>C++ code is merged to Fem module <a href="https://github.com/qingfengxia/FreeCAD.git" class="uri">https://github.com/qingfengxia/FreeCAD.git</a>, while python code is developed as an independent module: <a href="https://github.com/qingfengxia/Cfd" class="uri">https://github.com/qingfengxia/Cfd</a></p>
 <h3 id="multiphysics-solver-fenicssolver">2.5 Multiphysics Solver: <a href="https://github.com/qingfengxia/FenicsSolver">FenicsSolver</a></h3>
 <p>This is a multiphysics FEM solver based on Fenics. Currently, I am working on coupling Fenics with OpenFOAM, etc. See my presentation on [OpenFOAM workshop 2018])https://www.iesensor.com/blog/2018/06/25/coupling-openfoam-with-fenics-for-multiphysis-simulation-openfoam-workshop-13-presentation/)</p>
@@ -24,9 +25,12 @@
 <p>Currently, VTK and <strong>Paraview</strong> is sufficient is support the engineering design pipeline.</p>
 <h3 id="report-optimization-and-machine-learning">2.8 Report, optimization and machine learning</h3>
 <p>This work will start once the research in intelligent preprocessing reaches mature.</p>
-<h3 id="other-relevant">2.9 other relevant</h3>
-<p>CC-SA book: <a href="">&quot;Design large scale science and engineering software&quot;</a></p>
+<h2 id="book-and-workshop-rse-training">book and workshop RSE training</h2>
+<h3 id="ebook-module-developers-guide-to-freecad-httpsgithub.comqingfengxiafreecad_mod_dev_guide">ebook: <em>Module developer’s Guide to FreeCAD</em> <a href="https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide" class="uri">https://github.com/qingfengxia/FreeCAD_Mod_Dev_Guide</a></h3>
+<h3 id="book-design-large-scale-science-and-engineering-software">book: <a href="./book/book%20Design%20Large%20Scale%20Software_toc.pdf">“Design large scale science and engineering software”</a></h3>
+<p>This is an book in early stage, the table of content is available to preview.</p>
 <p><code>python-wrap</code>(https://github.com/qingfengxia/python-wrap): comparison of different approaches of write python interface for C++ code.</p>
+<h3 id="c-training-workshop"><a href="./workshop/index.html">C++ training workshop</a></h3>
 <h2 id="my-other-projects-and-research">3. My other projects and research</h2>
 <p>ResearchGate profile: <a href="https://www.researchgate.net/profile/Qingfeng_Xia/" class="uri">https://www.researchgate.net/profile/Qingfeng_Xia/</a></p>
 <p>My research projects</p>
