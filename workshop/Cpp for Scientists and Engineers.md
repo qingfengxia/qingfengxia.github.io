@@ -1,5 +1,18 @@
 
 
+### Aimed audiences
+
+For **intermediate C++ programmers**
+
+ to improve the performance and robustness of the large scale software.
+
++ safer scientific computation
++ some C++ pitfalls
++ design large scale software (yet completed)
+  - C++ wrapping for Python, or other interpreting languages
+
+---
+
 # Introduction to C++
 
 ## what is C++
@@ -16,7 +29,7 @@ but not the only extension of C:  objective-C, D, etc.
 
 Nowadays, most operation systems (OS) is written in C, Linux kernel
 
-Many high level language runtime are writen in C(Python)/C++(javascript)
+Many high level language runtime are written in C(Python)/C++(javascript)
 
 Unique: Pointer (address to raw memory space) and full control memory
 
@@ -87,7 +100,7 @@ Cppinsights: see how compiler do the compiling
 <repl.it>: can save user's code snippet, as it is used in this lesseon
 
 ---
-# C++ pitfalls
+# Safer computation in C++
 
 ## the jungle of integer types
 
@@ -245,84 +258,25 @@ const_cast<T>
 any_cast<T>  from `std::any` unbox to more specific type
 
 ---
-## reused keyword `using`
-
-+ typedef  `using mytype=std::size_t;`
-+ shortening name space `using std;`
-+ `using BaseClass::BaseClass;`
-
-It is comfusing, but not dangerous!
-
----
-## confusing keyword `static` (1)
-
-C legacy:
-+ in cpp file, but before the function name/declaration
-+ inside a function scope, to modify a variable
-```cpp
-static f(int i)
-{
-    static sum = 0;
-    return sum + i;
-}
-```
-
-see also <https://en.cppreference.com/w/cpp/keyword/static>
-
----
-### confusing keyword `static` (2)
- C++ object oriented programming header
-```
-class C
-{
-    static sum = 0;
-    static getClassName();
-}
-```
-
-*note* `static` should be avoid in multi-threading program
-
----
-###  pointer vs. reference => smart pointer
-
-The difference
-
-| type          | Pointer                                        | Reference                            |
-| ------------- | ---------------------------------------------- | ------------------------------------ |
-| meaning       | has the value of memory address                | another name to an existing variable |
-| initial value | can be `nullptr`, i.e. uninitialized condition | must assign a valued value           |
-| reassign      | allowed, except for `const T * pointer`        | not allowed                          |
-| be null?      | yes, widely used                               | `**int \*p;...int &r = \*p;**`       |
-| bool op       | `if(pointer)` to test whether it is nullptr    | `if(reference)` call `bool operator` |
-
-Reference does not solved the memory management problem, `dangling reference`
-
-using smart pointer of C++11, can be a better choice to pass object around.
-
----
-### pitfalls of object oriented programming
-+ virtual destructor for base class
-+ polymorphic only apply to pointer/reference
-+ multiple inheritance (MI)
-
----
-### pitfalls of object oriented programming (example code)
-
----
-## safe math algorithm
+## exception/error in math computation
 
 ### integer underflow/overflow
-+ CPU set status register, which may be checked by C and C++
 
-+ C lib: `errno` set and clear by library function
+- CPU set status register, which may be checked by C and C++
 
-  <>
+- C lib: `errno` set and clear by library function
 
-+ C++ way to detect under/overflow
+  <https://www.gnu.org/software/libc/manual/html_node/Errors-in-Math-Functions.html>
 
-`std::limits<long>::max()`
+  <https://en.cppreference.com/w/c/error/errno>
 
----
+- C++ way to detect under/overflow
+
+Note: know and detect your integer range in runtime
+
+ `std::limits<long>::max()`
+
+------
 
 ### float point exception and special values
 
@@ -336,7 +290,8 @@ NaN,  +Inf, -Inf
 
 those 3 special values operates with a valid number resulting in those special values
 
----
+------
+
 ### setup float point exception check in C++
 
 This is a C99 feature
@@ -353,37 +308,132 @@ This is a C99 feature
 <https://en.cppreference.com/w/c/numeric/fenv/FE_exceptions>
 
 ---
+
+# The complexity of C++
+## reused keyword `using`
+
++ typedef  `using mytype=std::size_t;`
++ shortening name space `using std;`
++ `using BaseClass::BaseClass;`
+
+It is confusing, but not dangerous!
+C++ does not stop you from doing silly and dangerous things, for the sake of performance
+
+---
+## confusing keyword `static` (1)
+
+C legacy:
++ in cpp file, but before the function name/declaration
++ inside a function scope, to modify a variable
+```cpp
+static f(int i) {
+    static sum = 0;
+    sum +=i;
+    return sum;
+}
+int main{
+cout<<f(1)<<endl;
+cout<<f(1)<<endl;  // what do  you expect the print?
+}
+```
+see also <https://en.cppreference.com/w/cpp/keyword/static>
+
+---
+### confusing keyword `static` (2)
+ C++ object oriented programming header
+```
+class C
+{
+    static sum = 0;
+    static getClassName();
+}
+```
+
+*note* `static` should be avoid in multi-threading program
+
+---
+##  pointer vs. reference => smart pointer
+
+The difference
+
+| type          | Pointer                                        | Reference                            |
+| ------------- | ---------------------------------------------- | ------------------------------------ |
+| meaning       | has the value of memory address                | another name to an existing variable |
+| initial value | can be `nullptr`, i.e. uninitialized condition | must assign a valued value           |
+| reassign      | allowed, except for `const T * pointer`        | not allowed                          |
+| be null?      | yes, widely used                               | `**int \*p;...int &r = \*p;**`       |
+| bool op       | `if(pointer)` to test whether it is nullptr    | `if(reference)` call `bool operator` |
+
+Reference does not solved the memory management problem, `dangling reference`
+
+**using smart pointer of C++11**, can be a better choice to pass objects around safely.
+
+## pitfalls of object oriented programming
++ virtual destructor for base class
++ polymorphic only apply to pointer/reference
++ multiple inheritance (MI)
+
+---
+### MI and diamond problem
+![img](assets/MI_diamond_problem.png)
+https://www.geeksforgeeks.org/multiple-inheritance-in-c/
+
+---
 # design large scale software
 
-### Software architecture
+## Software architecture
 ```cpp
-// namespace contains more classes
+// the software is like a house
+// namespace as component contains more classes
 namespace FrontWall{
     class Brick {
         int sand = 1;
         ...
 ```
-
+---
 ### stand on giant shoulder
 [awesome C++](https://github.com/fffaraz/awesome-cpp)    [awesome modern C++](https://github.com/rigtorp/awesome-modern-cpp)
 
 + libraries
+
 + learning material, video, blogs, books, talks conferences
+
 + useful tools: IDE, profilers, build, package and code analyzer
+
+---
+### design pattern
+
+---
+### Base class and type system for C++
+Compared with other compiling languages like C# and Java, C++ does not provide  a type system, neither a base class. Here is an implementation, extracted from FreeCAD project
+<https://github.com/qingfengxia/cppBase>
+
+There is no need to write factory class, but register a type by simple macro
+(only achievable by macro).
+```cpp
+    Base::BaseClass* bc = static_cast<Base::BaseClass*>(Base::Type::createInstanceByName("CClass"));
+    CClass* c2 = type_dynamic_cast<CClass>(bc);
+```
+see the full example <https://github.com/qingfengxia/cppBase/blob/master/TypeTest.cpp>
 
 ---
 ## C++ and Python
 
 ### python and C++ are good companions
   python is an interpreter lang, for fast prototyping
-  C++ is fast for large program and HPC
+  C++ codes run fast for large program and HPC
 
-  a few python modules are written in C/C++
-  There are various methods to export C++ API as python module
+  a few CPython standard modules are re-written in C/C++ for better perfomance
+  There are various methods to export C++ API as python module.
+  see more example and cmake/setup.py integration at
 
  <https://github.com/qingfengxia/python_wrap>
+---
 
-### Wrapping C++ code to other langs
+### Wrapping C++ code to other languages
+
+`swig` can wrap C/C++ to many languages, C#, Java, javascript, python, ruby, etc
+using the `interface.i` file
 
 ---
 
