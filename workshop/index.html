@@ -46,18 +46,30 @@ Culham Centre for Fusion Energy, UKAEA<br/>
 github: https://github.com/qingfengxia<br/>
 
 <br/>
-2019-10-27
+2019-11-06
 ---
 
 
-### Aimed audiences
+### Schedule
+
+Teaching: 90 min
+
+Exercise:  60 min: ​        example code provided
+
+### Useful links
++ online poll (quiz)
++ shared document/link to example code/this slide
+
+---
+
+### Aimed audiences and Objectives
 
 For **intermediate C++ programmers**
 
- to improve the performance and robustness of the large scale software.
+Objective:  to improve the performance and robustness of the large scale software.
 
++ Re-introduction of C++
 + safer scientific computation
-+ some C++ pitfalls
 + design large scale software (yet completed)
   - C++ wrapping for Python, or other interpreting languages
 
@@ -83,13 +95,13 @@ Many high level language runtime are written in C(Python)/C++(javascript)
 
 Unique: Pointer (address to raw memory space) and full control memory
 
-Power: C can be mixed with assembly language
+Power: assembly language can be embedded into C code
 
 ---
 ### C++ features over C
 + object oriented paradigm
 + generic programming by template  `std::vector<int> ints;`
-+ namespace to avoid name clash
++ `namespace` to avoid name clash
 + functional programming, `std::fuction, lambda`
 + exception (try-catch-finally)
 + RTTI: runtime type information, but not as powerful as Java/C#
@@ -106,14 +118,14 @@ Power: C can be mixed with assembly language
 + suitable for large scale software design, HPC
 e.g. CFD software Ansys Fluent from Fortran to C++
 ---
-## Popularity of C and C++
+### Popularity of C and C++
 <img src="./assets/tiobe_lang_rank_2019.png" width=75%>
 
 The combination of C and C++ takes the lead in Tiobe rankings.
 
 ---
 
-## C++ standards
+### C++ standards
 + C++ invented by Bjarne Stroustrup in 1985
 + the firs standard C++ 98,  standard library (STL) was not available
 + C++11 (modern C++) and C++17/C++20 have some exciting/modern features
@@ -128,7 +140,7 @@ The combination of C and C++ takes the lead in Tiobe rankings.
 
 + C++ grammar is too complicate
  - confusing keyword `using` and `static`
- - too many integer types, java has only one
+ - too many integer types, java has only unsigned types with fixed ranges
  - pointer, reference
  - polymorphic only apply to pointer/reference
  - no memory manager/garbage collector
@@ -141,7 +153,7 @@ The combination of C and C++ takes the lead in Tiobe rankings.
    [The Programmer Productivity Paradox ](https://dzone.com/articles/programmer-productivity)
 ---
 
-### try out using c++ online compilers
+## try out using c++ online compilers
 There is a list of online compiler to try C++ in webbrowser
 
 <https://arnemertz.github.io/online-compilers/>
@@ -150,7 +162,15 @@ Cppinsights: see how compiler do the compiling
 <repl.it>: can save user's code snippet, as it is used in this lesseon
 
 ---
+
+
 # Safer computation in C++
+
+## How crucial is the research software
+
+space shuttle accidence, image
+
+---
 
 ## the jungle of integer types
 
@@ -163,12 +183,16 @@ long
 long long
 // and with their unsigned version
 ```
-What is the size of `int` and `long` do you think?
+What is the size (in byte, unit of memory capacity) of `int` and `long` do you think?
 
 <a href="https://repl.it/@qingfengxia/printcpptypesize">run example by online compiler</a>
 
+
+
 ---
-it depends on CPU, OS, even compiler target (32 or 64bit)
+
+### C++'s integer types depends on CPU, OS, even compiler
+
 ```cpp
 // here we only consider 32 and 64bit OS
 void*  // identifed from memory address pointer byte size
@@ -179,13 +203,97 @@ int     4 bytes
 long   depends on OS, compiler settings
 long long  8bytes
 ```
-windows 64bit, has `long` just 4 bytes, while on Linux it is 8 bytes (64bits)
+windows 64 bit, has `long` just 4 bytes, while on Linux 64 bit OS,  it is 8 bytes 
 
-`size_t` returned by `sizeof` operator and  `std::vector.size()`
-it is 64bits on both uint64_t on 64bit windows and Linux system, while 32bit unsigned integer `uint32_t`
+`size_t` returned by `sizeof` operator and  `std::vector.size()`, it is 64 bits on both `uint64_t` on 64 bit windows and Linux system, while 32 bit unsigned integer
 
 ---
-## integer types and conversion
+
+### fixed width integer types in C and C++
+
+**Java and C# has fixed byte size for integer type cross-platform!**
+
+header `<cstdint>` has fixed width integer types,  `uint32_t` `int64_t` 
+
+---
+
+### numeric type in matlab
+
+![Image result for numeric type in matlab](assets/matlab_numeric_types.png)
+
+matlab `a = 1.0`   default to double type,  as C++ python, etc
+
+---
+### numeric types in other programming languages
+
+| language               | C/C++           | Fortran         | Java            | javascript      | C#              | python3   | Matlab |
+| ---------------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------- | ------ |
+| type                   | int             | integer         | int             | Number          | int             | int       | double |
+| upper and lower limits | -2^31 to 2^31-1 | -2^31 to 2^31-1 | -2^31 to 2^31-1 | -2^53 to 2^53-1 | -2^31 to 2^31-1 | unlimited |        |
+| byte in memory         | 4               | 4 (KIND=4)      | fixed 4         | 8               | fixed 4         | >=24      | >=8    |
+
+---
+### deal with algorithm overflow
+
+<https://www.pluralsight.com/blog/software-development/convert-unsigned-int-to-signed-int>
+
+```cpp
+#include <limits>    // for std::numeric_limits
+#include <stdexcept> // for std::overflow_error
+
+int SizeToInt(size_t u)
+{
+    if (u > std::numeric_limits<int>::max())
+    {
+        throw std::overflow_error(
+            "size_t value cannot be stored in a variable of type int.");
+    }
+
+    return static_cast<int>(u);
+}
+```
+---
+## float point number type 
+
+### decimal vs floating point
+
++ *decimal* in Python/Java,  precisely map to human counting system, order=10
+
++ float point, is based on binary system, maybe not precise to represent *decimal*#
+
+---
+
+
+![Image result for float point number](assets/Single-Precision-IEEE-754-Floating-Point-Standard.jpg)
+
+![Image result for float point number](assets/FloatingPointNumber.jpg)
+
+---
+
+### float point number types 
+
+<https://en.wikipedia.org/wiki/Double-precision_floating-point_format>,
+IEEE754-2008 standard
+
+- 16bit `half` precision, widely used in GPU
+
+- 32bit single precision, `float`, at least 9 significant digits
+
+- 64bit `double` precision, `double` for short in  C/C++
+
+- 128-bit: Quadruple (binary128), barely any CPU support this natively
+
+- `long double` depends on compiler implementation
+
+  `double`  is a common primitive type in programming languages
+
+---
+
+## Implicit conversion (1) C language features
+### dangerous integer type implicit conversion
+
+It is crucial to know the types of your programming languages!
+
 ```cpp
 void std_container_index_test(){
     std::vector<int> v;
@@ -194,21 +302,10 @@ void std_container_index_test(){
         std::cout << v[index];
 }
 ```
+
 <a href="https://repl.it/@qingfengxia/stdcontainerindextest"> run examle by online compiler</a>
+
 ---
-### float point type and precision
-
-<https://en.wikipedia.org/wiki/Double-precision_floating-point_format>,
-IEEE754-2008 standard
-
-- 16bit half precision, widely used in GPU
-- 32bit single precision, `float`, at least 9 significant digits
-- 64bit double precision, `double` for short in  C/C++
-- 128-bit: Quadruple (binary128), barely any CPU support this natively
-- `long double` depends on compiler implementation
----
-
-## implicit conversion (1) C language features
 ### algorithmic promotion
 
 + safe from smaller type (smaller in byte size, range) to bigger type
@@ -222,6 +319,8 @@ IEEE754-2008 standard
    see example code in later section
 
 + `enum` is `int` if the underlying type is not explicitly specified
+
+   see more details: <https://en.cppreference.com/w/cpp/language/implicit_conversion#Integral_promotion>
 
 ---
 ### numerical conversion
@@ -245,20 +344,12 @@ IEEE754-2008 standard
 
 ---
 
-### Boolean conversion
 
-+ from bool to integer
-  - bool to int: true => 1, false => 0
-  - many c++ type can be converted into bool type
-  - if a customed type can converted into, but further into integer should be forbidden
-  e.g. `if(std::cin) {...}` is wanted, but `int n = std::cout;` must be avoided, then
-  `explicit operator bool() const { ... }`
-
-see more details: <https://en.cppreference.com/w/cpp/language/implicit_conversion#Integral_promotion>
-
----
 ## implicit conversion (2) C++ object oriented
+
+
 ### implicitly cast to base/parent type pointer/reference
+
 this is the polymorphic, the essence of object oriented programming
 
 Pointer conversions:
@@ -266,14 +357,29 @@ Pointer conversions:
 
    from `nullptr` to any type pointer
 
+  function name to function pointer
+
+  array name to pointer
+
+---
+
 ### if constructor with single parameter exists
 
 ```cpp
 const char* c_string = "hello world";
 std::string s = c_string;
 ```
+
+it leads to the question of function overloading priority
+
 ---
-### prevent implicit conversion
+### function overloading resolution
+
+todo!
+
+---
+
+## prevent implicit conversion (1)
 
 ```cpp
 #include <iostream>
@@ -291,21 +397,121 @@ int main(){
     A d = 1.5;  // compiler error if the constructure is protected by `explicit`
 }
 ```
-C++ keyword `explicit` qualified constructor can avoid this
+
+C++ keyword `explicit` can prevent implicit conversion on constructor
+
+---
+
+### prevent implicit conversion (2)
+
+1. explicit way for one specific type
+
+```cpp
+void function(int i) { /* implementation */}
+void function(char i); // give link error, this declaration has no implementation
+//or, in C++11
+void function(char i) = delete;
+```
+
+**2. You cannot have implicit conversion and template argument deduction at the same time.**
+
+```cpp
+template<class T> void f(T, T);
+template<class T> void g(T, std::type_identity_t<T>);
+f(4.2, 0); // error, deduced conflicting types for 'T'
+g(4.2, 0); // OK, calls g<double>, bypass this restriction and enable implicit conversion
+```
+
+3. `nothing_but<>`  can handled all builtin types
 
 ---
 ### explicit cast in C++
 
-static_cast<T>  conversion at compiling time, safer
+`static_cast<T>`  conversion at compiling time, safer
+
 ```cpp
     double d = 123456.789;
     float f = static_cast<float>(d);
     // silly, I messed up the value type and pointer type
     float* pf = static_cast<float*>(d);
 ```
-dynamic_cast<T> conversion at runtime
-const_cast<T>
-any_cast<T>  from `std::any` unbox to more specific type
+
+`dynamic_cast<T>` conversion at runtime
+`const_cast<T>`
+`any_cast<T>`  from `std::any` unbox to more specific type
+`reinterpret_cast<>`  dangerous! do not use!
+
+---
+## boolean conversion
+
++ a wide range of types in C++ can implicitly converted into bool type
+
+  nullptr-> false;   0.0 -> false;
+
++ from bool to integer is well defined
+  
+  - bool to int: true => 1, false => 0
+  - if a type can be converted into bool, but further conversion into integer should be forbidden
+    e.g. `if(std::cin) {...}` is wanted, but `int n = std::cout;` must be avoided, then
+    `explicit operator bool() const { ... }`
+
+
+---
+
+### surprising conversion from pointer to bool
+
+```cpp
+void foo(const std::string& in) { std::cout << in << '\n'; }
+void foo(bool in) { std::cout << "bool: " << in << '\n';}
+
+foo("Hello World");
+```
+
+see explanation <https://www.bfilipek.com/2019/07/surprising-conversions-char-bool.html#more>
+
+In short,  it is caused by auto conversion rule of C++,
+
+conversion from `const char*` to bool has higher priority because bool is a built-in type!
+
+
+---
+## Exception safety
+
+4 levels of exception safety
+
++ ideal: no failure
++ strong: failure but rollback to previous condition, think about online banking transaction
++ basic: failure without resource leakage, important for server process
++ none: no guarantee, left program in a deterministic condition
+
+There books/guidelines on write exception safety C++ code,
+
+[C++ core guideline on exception](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#S-errors)
+
+
+
+---
+
+### some guideline from [SEI CERT C++ Coding Standard](https://wiki.sei.cmu.edu/confluence/pages/viewpage.action?pageId=88046682)
+
+[ERR54-CPP. Catch handlers should order their parameter types from most derived to least derived](https://wiki.sei.cmu.edu/confluence/display/cplusplus/ERR54-CPP.+Catch+handlers+should+order+their+parameter+types+from+most+derived+to+least+derived)
+
+do you know why?
+
+---
+### exception change in C++11 and C++17
+
+C++98:  defined a few standard exceptions in `<stdexception>` use then instead of throw int or string
+
+  they are all derived from `std::exception` so it is easier to catch all derived exceptions
+
+  https://en.cppreference.com/w/cpp/error/exception
+
+C++11:  `current_exception` pointer, `nested_exception`
+
+c++17:   exception specification changed,
+
+ ` f() noexception(false)` instead of  `f() throw(std::logical_error)`
 
 ---
 ## exception/error in math computation
@@ -324,11 +530,13 @@ any_cast<T>  from `std::any` unbox to more specific type
 
 Note: know and detect your integer range in runtime
 
- `std::limits<long>::max()`
+C has `LONG_MAX` macro, c++ has more general one `std::limits<long>::max()`
 
-------
+---
 
 ### float point exception and special values
+
+Divied by zero (float point types)might be blocked by compiler at compiling time.
 
 NaN,  +Inf, -Inf
 
@@ -340,11 +548,11 @@ NaN,  +Inf, -Inf
 
 those 3 special values operates with a valid number resulting in those special values
 
-------
+---
 
 ### setup float point exception check in C++
 
-This is a C99 feature
+This is a C99 feature in header  `<cfenv>`
 
 ```cpp
     if(fetestexcept(FE_DIVBYZERO)) printf(" FE_DIVBYZERO");
@@ -359,74 +567,14 @@ This is a C99 feature
 
 ---
 
-# The complexity of C++
-## reused keyword `using`
+## diagnostics tools to improve code safety
 
-+ typedef  `using mytype=std::size_t;`
-+ shortening name space `using std;`
-+ `using BaseClass::BaseClass;`
++ [Clang Power Tools](https://marketplace.visualstudio.com/items?itemName=vs-publisher-690586.ClangPowerTools), turn on compiler's all warning switches
++ cppchecker, lint, some other linting/checker tools
++ [SEI CERT C++ Coding Standard](https://wiki.sei.cmu.edu/confluence/pages/viewpage.action?pageId=88046682), online reading
 
-It is confusing, but not dangerous!
-C++ does not stop you from doing silly and dangerous things, for the sake of performance
-
----
-## confusing keyword `static` (1)
-
-C legacy:
-+ in cpp file, but before the function name/declaration
-+ inside a function scope, to modify a variable
-```cpp
-static f(int i) {
-    static sum = 0;
-    sum +=i;
-    return sum;
-}
-int main{
-cout<<f(1)<<endl;
-cout<<f(1)<<endl;  // what do  you expect the print?
-}
-```
-see also <https://en.cppreference.com/w/cpp/keyword/static>
-
----
-### confusing keyword `static` (2)
- C++ object oriented programming header
-```
-class C
-{
-    static sum = 0;
-    static getClassName();
-}
-```
-
-*note* `static` should be avoid in multi-threading program
-
----
-##  pointer vs. reference => smart pointer
-
-The difference
-
-| type          | Pointer                                        | Reference                            |
-| ------------- | ---------------------------------------------- | ------------------------------------ |
-| meaning       | has the value of memory address                | another name to an existing variable |
-| initial value | can be `nullptr`, i.e. uninitialized condition | must assign a valued value           |
-| reassign      | allowed, except for `const T * pointer`        | not allowed                          |
-| be null?      | yes, widely used                               | `**int \*p;...int &r = \*p;**`       |
-| bool op       | `if(pointer)` to test whether it is nullptr    | `if(reference)` call `bool operator` |
-
-Reference does not solved the memory management problem, `dangling reference`
-
-**using smart pointer of C++11**, can be a better choice to pass objects around safely.
-
-## pitfalls of object oriented programming
-+ virtual destructor for base class
-+ polymorphic only apply to pointer/reference
-+ multiple inheritance (MI)
-
----
-### MI and diamond problem
-![img](assets/MI_diamond_problem.png)
-https://www.geeksforgeeks.org/multiple-inheritance-in-c/
++ C++ Core guidelines checker (a plugin of visual studio)
++ etc.
 
 ---
 # design large scale software
@@ -436,11 +584,13 @@ https://www.geeksforgeeks.org/multiple-inheritance-in-c/
 // the software is like a house
 // namespace as component contains more classes
 namespace FrontWall{
-    class Brick {
-        int sand = 1;
-        ...
+    class Block {
+        function makeBrick(){
+        	int sand = 1; ... }
 ```
+
 ---
+
 ### stand on giant shoulder
 [awesome C++](https://github.com/fffaraz/awesome-cpp)    [awesome modern C++](https://github.com/rigtorp/awesome-modern-cpp)
 
@@ -478,6 +628,7 @@ see the full example <https://github.com/qingfengxia/cppBase/blob/master/TypeTes
   see more example and cmake/setup.py integration at
 
  <https://github.com/qingfengxia/python_wrap>
+
 ---
 
 ### Wrapping C++ code to other languages
