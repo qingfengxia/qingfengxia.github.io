@@ -46,15 +46,15 @@ Culham Centre for Fusion Energy, UKAEA<br/>
 github: https://github.com/qingfengxia<br/>
 
 <br/>
-2019-11-06
+2019-11-18
 ---
 
 
 ### Schedule
 
-Teaching: 90 min
+Teaching: 60 min
 
-Exercise:  60 min: ​        example code provided
+Exercise:  120 min: ​     live coding session   example code provided
 
 ### Useful links
 + online poll (quiz)
@@ -64,18 +64,30 @@ Exercise:  60 min: ​        example code provided
 
 ### Aimed audiences and Objectives
 
-For **intermediate C++ programmers**
+For **intermediate programmers with experience of at least one programming language**
 
 Objective:  to improve the performance and robustness of the large scale software.
 
-+ Re-introduction of C++
+Part 1: Re-introduction of (modern) C++
+
++ numeric types in programming languages
 + safer scientific computation
-+ design large scale software (yet completed)
-  - C++ wrapping for Python, or other interpreting languages
+
+[Part 2  New features since C++11](./modern_cpp_smart_pointers.html)
+
++ overviews of C++11, C++17 and C++20 features
+
++ smart pointers of C++11
+
+part 3  design large scale software (yet completed)
+
+- C++ wrapping for Python, or other interpreting languages
+
+Part 4: Pitfalls of C++ (yet completed)
 
 ---
 
-# Introduction to C++
+# I. Introduction to C++
 
 ## what is C++
 
@@ -89,7 +101,7 @@ but not the only extension of C:  objective-C, D, etc.
 ### then what is C language?
  C is born with Unix OS from Bell lab in early 1970s.
 
-Nowadays, most operation systems (OS) is written in C, Linux kernel
+Nowadays, most operation systems (OS) is written in C, Linux kernel, the language to control OS
 
 Many high level language runtime are written in C(Python)/C++(javascript)
 
@@ -127,33 +139,47 @@ The combination of C and C++ takes the lead in Tiobe rankings.
 
 ### C++ standards
 + C++ invented by Bjarne Stroustrup in 1985
-+ the firs standard C++ 98,  standard library (STL) was not available
+
++ The firs standard C++ 98,  standard library (STL) was not available
+
 + C++11 (modern C++) and C++17/C++20 have some exciting/modern features
-  - `std::thread`, `std::function`, `lambda`, `std::tuple`, smart pointers
-  - `filesystem`(C++17), traits
+  - `std::thread`, `std::function`, `lambda`, `std::tuple`, smart pointers, type traits
+  - `filesystem`(C++17)
 
 + some can not wait for a better C++: *rust, go* are invented before C++11 published
+
+  >  we will talk about features of modern C++ in the later sections
 
 ---
 
 ## why not C++ (Cons)
 
-+ C++ grammar is too complicate
- - confusing keyword `using` and `static`
+C++ grammar is too complicate: 
+
  - too many integer types, java has only unsigned types with fixed ranges
  - pointer, reference
+ - confusing keyword `using` and `static`
  - polymorphic only apply to pointer/reference
- - no memory manager/garbage collector
+ - no memory management / garbage collector like Python, Java, C#
+
+Less productive:
 
 + less featured standard libraries, vs. python, Java, C#, etc
   however, C++ has lib and frameworks like boost, Qt
 
-+ less productivity:
-    on average, 50 lines of production code
++ less productivity in regard of coding:
+    on average, 50 lines of production code a day
    [The Programmer Productivity Paradox ](https://dzone.com/articles/programmer-productivity)
 ---
 
-## try out using c++ online compilers
+## C++ free course for beginner
+
+[C++ from beginner to advance](C++ Tutorial from Basic to Advance) 9hr youtube course
+
+[free 18 hr course on Udemy](https://www.udemy.com/course/free-learn-c-tutorial-beginners/?LSNPUBID=JVFxdTr9V80&ranEAID=JVFxdTr9V80&ranMID=39197&ranSiteID=JVFxdTr9V80-JvSaBsr8cDbph06Amjp0Hw)
+
+## Try out c++ using  online compilers
+
 There is a list of online compiler to try C++ in webbrowser
 
 <https://arnemertz.github.io/online-compilers/>
@@ -164,7 +190,7 @@ Cppinsights: see how compiler do the compiling
 ---
 
 
-# Safer computation in C++
+# II. Safer computation (numeric types)
 
 ## How crucial is the research software
 
@@ -187,8 +213,6 @@ What is the size (in byte, unit of memory capacity) of `int` and `long` do you t
 
 <a href="https://repl.it/@qingfengxia/printcpptypesize">run example by online compiler</a>
 
-
-
 ---
 
 ### C++'s integer types depends on CPU, OS, even compiler
@@ -209,6 +233,28 @@ windows 64 bit, has `long` just 4 bytes, while on Linux 64 bit OS,  it is 8 byte
 
 ---
 
+### why limited size in memory?
+
+In math, a number has unlimited range,  from -inf, to inf
+
+In Python3, `int` type has no limit on integer range.
+
+Why the primitive integer type use only fixed byte size? 
+
+What is the impact (difference of python int and c++ int)?
+
+---
+
+### Numerical computation on CPU
+
+`int a=1; int b=2; int c=a+b;`  
+
+addition `a+b` takes only 1 CPU cycles to complete, if operands fit into register
+
+![Numerical computation on CPU](images/ALU_demo.png)
+
+---
+
 ### fixed width integer types in C and C++
 
 **Java and C# has fixed byte size for integer type cross-platform!**
@@ -223,14 +269,25 @@ header `<cstdint>` has fixed width integer types,  `uint32_t` `int64_t`
 
 matlab `a = 1.0`   default to double type,  as C++ python, etc
 
+Julia has the same integer and float pointer numeric types as C
+
 ---
 ### numeric types in other programming languages
 
-| language               | C/C++           | Fortran         | Java            | javascript      | C#              | python3   | Matlab |
-| ---------------------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------- | ------ |
-| type                   | int             | integer         | int             | Number          | int             | int       | double |
-| upper and lower limits | -2^31 to 2^31-1 | -2^31 to 2^31-1 | -2^31 to 2^31-1 | -2^53 to 2^53-1 | -2^31 to 2^31-1 | unlimited |        |
-| byte in memory         | 4               | 4 (KIND=4)      | fixed 4         | 8               | fixed 4         | >=24      | >=8    |
+note:  some languages does not need to specify type when decleare, but infering the type
+
+`i=1`   i is double type in matlab, `auto i=1;`  in C++
+
+```julia-repl
+# 32-bit system:  julia> typeof(1)  Int32
+# 64-bit system:  julia> typeof(1)  Int64
+```
+
+| language               | C/C++           | Fortran            | Java/C#         | javascript      | Julia         | Python3   | Matlab          |
+| ---------------------- | --------------- | ------------------ | --------------- | --------------- | ------------- | --------- | --------------- |
+| type                   | int             | integer            | int             | Number          | int           | int       | double          |
+| upper and lower limits | -2^31 to 2^31-1 | -2^31 to 2^31-1    | -2^31 to 2^31-1 | -2^53 to 2^53-1 | like C `long` | unlimited | floating  point |
+| byte in memory         | 4 depends       | default 4 (KIND=4) | fixed 4         | fixed 8         | 4 or 8        | >=24      | >=8             |
 
 ---
 ### deal with algorithm overflow
@@ -241,25 +298,62 @@ matlab `a = 1.0`   default to double type,  as C++ python, etc
 #include <limits>    // for std::numeric_limits
 #include <stdexcept> // for std::overflow_error
 
-int SizeToInt(size_t u)
-{
-    if (u > std::numeric_limits<int>::max())
-    {
+int SizeToInt(size_t u) {
+    if (u > std::numeric_limits<int>::max())     {
         throw std::overflow_error(
             "size_t value cannot be stored in a variable of type int.");
     }
-
     return static_cast<int>(u);
 }
 ```
+actually CPU hardware can detect  the overflow/underflow error, but may be ignored by the programmer, see later section for disccusion
+
 ---
+### arbitrary precision integer
+
+Python 3 `int` type has arbitrary precision by default,  **no overflow concern!**
+
+| Language | python    | C++         | Fortran | Java         | Julia                                                        | Matlab      |
+| -------- | --------- | ----------- | ------- | ------------ | ------------------------------------------------------------ | ----------- |
+| type     | int       | NA          |         | `BigInteger` | BigInt                                                       |             |
+| support  | version 3 | third-party |         | Java SE 7    | [`Base.GMP`](https://docs.julialang.org/en/v1/base/numbers/#Base.GMP.BigInt) | third-party |
+|          |           |             |         |              |                                                              |             |
+
+
+
+---
+
+## fixed point decimal
+
+try this in Python`0.1 + 0.1 + 0.1 - 0.3`
+
+equal interval, with the specified the precision.
+
+> -99.99 to 99.99 with a step 0.01(precision)
+
+fixed point decimal can be emulated by integer arithmatics, while it is not efficient to store value with a large range, therefore floating point is widely implemented in CPU.
+
+In C++, it can be achieved by `std::ratio<integer, denominal>` . 
+
+rational number in python , `Fraction(num, denom)`  
+
+>  here `denominal = 100`, if 0.01(precision) is desired.
+
+
+
+---
+
+
+
 ## float point number type 
 
-### decimal vs floating point
+### decimal (base 10) vs binary (base 2) floating point
 
 + *decimal* in Python/Java,  precisely map to human counting system, order=10
 
-+ float point, is based on binary system, maybe not precise to represent *decimal*#
++ float point, is based on binary system, maybe not precise to represent *decimal*
+
+  
 
 ---
 
@@ -268,9 +362,34 @@ int SizeToInt(size_t u)
 
 ![Image result for float point number](assets/FloatingPointNumber.jpg)
 
+ exponent is 8-bit signed integer:   -128~127:     roughly maximum value:  $2^{127}$  or  $1.7 \times 10^{38}$
+
 ---
 
-### float point number types 
+###  decimal (in human sense) type is absent in C/C++
+
+wikipedia: 
+
+python and java has library to support this `decimal` type, used in finance
+
+Third-party C/C++ library
+
++  https://github.com/vpiotr/decimal_for_cpp  header only, using 8 byte storage for this type
+
++ **[Boost.Multiprecision](https://www.boost.org/doc/libs/1_66_0/libs/multiprecision/doc/html/index.html)**  gives 50 decimal digits
+
+  ```cpp
+  using boost::multiprecision::cpp_dec_float_50;
+  cpp_dec_float_50 seventh = cpp_dec_float_50(1) / 7;
+  std::cout.precision(std::numeric_limits<cpp_dec_float_50>::digits10);
+  std::cout << seventh << std::endl;
+  ```
+
+  
+
+---
+
+### float point number types (binary)
 
 <https://en.wikipedia.org/wiki/Double-precision_floating-point_format>,
 IEEE754-2008 standard
@@ -281,11 +400,29 @@ IEEE754-2008 standard
 
 - 64bit `double` precision, `double` for short in  C/C++
 
+   1~17 significant digits (52 bits), 
+
+   exponent is 11-bit signed integer:   -1023~1023
+
 - 128-bit: Quadruple (binary128), barely any CPU support this natively
 
 - `long double` depends on compiler implementation
 
-  `double`  is a common primitive type in programming languages
+  `double`  is a common/default in programming languages (Javascript, Python, Matlab)
+
+---
+### Arbitrary decimal float point support
+General advice:  
+
++ use `double `precision (binary64) as possible,  multiplication and addition is fast (single CPU cycle)
+
+* use `decimal` float point, as you choose to use arbitrary precision!
+
+| Language | python       | C++             | Fortran | Java         | Julia    | Matlab          |
+| -------- | ------------ | --------------- | ------- | ------------ | -------- | --------------- |
+| type     | int          | NA              |         | `BigDecimal` | BigFloat | HPF             |
+| support  | standard lib | third-party lib |         | Java SE 7    | built-in | third-party lib |
+|          | primitive    |                 |         | Immutable    |          |                 |
 
 ---
 
@@ -342,139 +479,47 @@ void std_container_index_test(){
 
   see example <https://en.cppreference.com/w/cpp/language/operator_comparison>
 
----
-
-
-## implicit conversion (2) C++ object oriented
-
-
-### implicitly cast to base/parent type pointer/reference
-
-this is the polymorphic, the essence of object oriented programming
-
-Pointer conversions:
-   from a type pointer to `void`,
-
-   from `nullptr` to any type pointer
-
-  function name to function pointer
-
-  array name to pointer
-
----
-
-### if constructor with single parameter exists
-
-```cpp
-const char* c_string = "hello world";
-std::string s = c_string;
-```
-
-it leads to the question of function overloading priority
-
----
-### function overloading resolution
-
-todo!
-
----
-
-## prevent implicit conversion (1)
-
-```cpp
-#include <iostream>
-class A {
-    bool b;
-public:
-	A(bool param)  // use `explicit` to see the difference
-    { std::cout<<"bool actor called with param =" << param << std::endl; }
-    explicit  operator bool() {return b;};
-};
-int main(){
-    A a = A(1);  // int -> bool, no compiler warning, but maybe not what you want
-    A b(2.3); // double -> bool, no compiler warning, but maybe not what you want
-    A c = true;  // compiler error if the constructure is protected by `explicit`
-    A d = 1.5;  // compiler error if the constructure is protected by `explicit`
-}
-```
-
-C++ keyword `explicit` can prevent implicit conversion on constructor
-
----
-
-### prevent implicit conversion (2)
-
-1. explicit way for one specific type
-
-```cpp
-void function(int i) { /* implementation */}
-void function(char i); // give link error, this declaration has no implementation
-//or, in C++11
-void function(char i) = delete;
-```
-
-**2. You cannot have implicit conversion and template argument deduction at the same time.**
-
-```cpp
-template<class T> void f(T, T);
-template<class T> void g(T, std::type_identity_t<T>);
-f(4.2, 0); // error, deduced conflicting types for 'T'
-g(4.2, 0); // OK, calls g<double>, bypass this restriction and enable implicit conversion
-```
-
-3. `nothing_but<>`  can handled all builtin types
-
----
-### explicit cast in C++
-
-`static_cast<T>`  conversion at compiling time, safer
-
-```cpp
-    double d = 123456.789;
-    float f = static_cast<float>(d);
-    // silly, I messed up the value type and pointer type
-    float* pf = static_cast<float*>(d);
-```
-
-`dynamic_cast<T>` conversion at runtime
-`const_cast<T>`
-`any_cast<T>`  from `std::any` unbox to more specific type
-`reinterpret_cast<>`  dangerous! do not use!
-
----
-## boolean conversion
-
-+ a wide range of types in C++ can implicitly converted into bool type
-
-  nullptr-> false;   0.0 -> false;
-
-+ from bool to integer is well defined
-  
-  - bool to int: true => 1, false => 0
-  - if a type can be converted into bool, but further conversion into integer should be forbidden
-    e.g. `if(std::cin) {...}` is wanted, but `int n = std::cout;` must be avoided, then
-    `explicit operator bool() const { ... }`
 
 
 ---
+# III. Safer computation (third-party library)
 
-### surprising conversion from pointer to bool
+## multiprecision integer and float points
 
-```cpp
-void foo(const std::string& in) { std::cout << in << '\n'; }
-void foo(bool in) { std::cout << "bool: " << in << '\n';}
+to avoid overflow error
 
-foo("Hello World");
-```
++ `boost::multiprecision`
 
-see explanation <https://www.bfilipek.com/2019/07/surprising-conversions-char-bool.html#more>
-
-In short,  it is caused by auto conversion rule of C++,
-
-conversion from `const char*` to bool has higher priority because bool is a built-in type!
-
+ 
 
 ---
+
+## numerical type with safe range
+
+### boost::Safe<integer_type>
+
+https://www.boost.org/doc/libs/1_71_0/libs/safe_numerics/doc/html/tutorial/1.html
+
+The type supports both infinities and NaN's. An infinity is generated whenever the result would overflow, and a NaN is generated for any mathematically undefined operation.
+
+
+
+### safe range  
+
+banking, int64 is sufficient
+
+`safe_signed_range<-11, 11>`
+
+---
+
+
+
+Those special extended types use much more CPU cycles to complete, which is not accepted in large scale matrix operation. Insread, the most comptuation efficient hardware supported type, `double` will be used with careful consideration/design of **float point exception**
+
+---
+
+# IV. Safer computation (exception)
+
 ## Exception safety
 
 4 levels of exception safety
@@ -565,7 +610,11 @@ This is a C99 feature in header  `<cfenv>`
 
 <https://en.cppreference.com/w/c/numeric/fenv/FE_exceptions>
 
+
+
 ---
+
+
 
 ## diagnostics tools to improve code safety
 
@@ -575,88 +624,6 @@ This is a C99 feature in header  `<cfenv>`
 
 + C++ Core guidelines checker (a plugin of visual studio)
 + etc.
-
----
-# design large scale software
-
-## Software architecture
-```cpp
-// the software is like a house
-// namespace as component contains more classes
-namespace FrontWall{
-    class Block {
-        function makeBrick(){
-        	int sand = 1; ... }
-```
-
----
-
-### stand on giant shoulder
-[awesome C++](https://github.com/fffaraz/awesome-cpp)    [awesome modern C++](https://github.com/rigtorp/awesome-modern-cpp)
-
-+ libraries
-
-+ learning material, video, blogs, books, talks conferences
-
-+ useful tools: IDE, profilers, build, package and code analyzer
-
----
-### design pattern
-
----
-### Base class and type system for C++
-Compared with other compiling languages like C# and Java, C++ does not provide  a type system, neither a base class. Here is an implementation, extracted from FreeCAD project
-<https://github.com/qingfengxia/cppBase>
-
-There is no need to write factory class, but register a type by simple macro
-(only achievable by macro).
-```cpp
-    Base::BaseClass* bc = static_cast<Base::BaseClass*>(Base::Type::createInstanceByName("CClass"));
-    CClass* c2 = type_dynamic_cast<CClass>(bc);
-```
-see the full example <https://github.com/qingfengxia/cppBase/blob/master/TypeTest.cpp>
-
----
-## C++ and Python
-
-### python and C++ are good companions
-  python is an interpreter lang, for fast prototyping
-  C++ codes run fast for large program and HPC
-
-  a few CPython standard modules are re-written in C/C++ for better perfomance
-  There are various methods to export C++ API as python module.
-  see more example and cmake/setup.py integration at
-
- <https://github.com/qingfengxia/python_wrap>
-
----
-
-### Wrapping C++ code to other languages
-
-`swig` can wrap C/C++ to many languages, C#, Java, javascript, python, ruby, etc
-using the `interface.i` file
-
----
-
-### `numba` JIT example
-```python
-from numba import jit
-@jit
-def create_fractal(min_x, max_x, min_y, max_y, image, iters):
-    height = image.shape[0]
-    width = image.shape[1]
-
-    pixel_size_x = (max_x - min_x) / width
-    pixel_size_y = (max_y - min_y) / height
-    for x in range(width):
-        real = min_x + x * pixel_size_x
-        for y in range(height):
-            imag = min_y + y * pixel_size_y
-            color = mandel(real, imag, iters)
-            image[y, x] = color
-    return image
-```
-full example at <https://numba.pydata.org/numba-doc/dev/user/examples.html>
 
 
     </textarea>
